@@ -59,7 +59,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24.0'
+          go-version: '1.20'
           cache-dependency-path: |
             core/go.sum
 
@@ -130,8 +130,8 @@ jobs:
           git add CHANGELOG.md
           if ! git diff --cached --quiet; then
             echo "Commit pushing"
-            git config --local user.email "1060494425@qq.com"
-            git config --local user.name "zc"
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
             git commit -m "Update changelog"
             git push
             if [ $? -eq 0 ]; then
@@ -173,7 +173,7 @@ jobs:
       - name: Generate release.md
         run: |
           tags=($(git tag --merged $(git rev-parse HEAD) --sort=-creatordate))
-          preTag=$(curl --silent "https://api.github.com/repos/chen08209/FlClash/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")' || echo "")
+          preTag=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")' || echo "")
           currentTag=""
           for ((i = 0; i <= ${#tags[@]}; i++)); do
             if (( i < ${#tags[@]} )); then
@@ -241,8 +241,8 @@ jobs:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
           source-directory: ./tmp/
-          destination-github-username: zc
-          destination-repository-name: FlClash-fdroid-repo
+          destination-github-username: ${{ github.repository_owner }}
+          destination-repository-name: fl-clash-fdroid-repo
           user-name: 'github-actions[bot]'
           user-email: 'github-actions[bot]@users.noreply.github.com'
           target-branch: main
